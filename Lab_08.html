@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Lab_07</title>
+<script src="jquery.js"> </script>
+<style>
+input.invalid, textarea.invalid {
+	border: 2px solid red;
+}
+input.valid, textarea.valid {
+	border: 2px solid green;
+}
+input[type='checkbox'].uncheck {
+	-webkit-appearance: button;
+	width: 15px;
+	height: 15px;
+	border: 2px solid red;
+}
+
+</style>
+</head>
+<body>
+<button id="createForm"> Create Form </button>
+<div id="menu" style="height:100%; width:200px; left:800px; top:100px; display: none;">
+	<ul>
+		<li id="text">Text</li>
+		<li id="password">Password</li>
+		<li id="selectOptions">Select > Options</li>
+		<li id="radio">Radio</li>
+		<li id="check">Check</li>
+		<li id="file">File</li>
+		<li id="datalistOptions">Datalist > Options</li>
+		<li id="number">Number</li>
+		<li id="keygen">Keygen</li>
+		<li id="textArea">TextArea</li>
+		<li id="output">Output</li>
+	</ul>
+</div>
+<div id = "formDiv">
+	<form>
+		<input type="button" value="JSON" id="json">
+	</form>
+</div>
+<script>
+$(document).ready(function() {
+	getLocalData();
+	function getLocalData() {
+			var formData = JSON.parse(localStorage.getItem('form'));
+			if (formData !== null) {
+				return buildForm(formData);
+			}
+	};
+	
+	function buildForm(formData) {
+		for (i = 0; i < formData.length; i++) {
+			console.log(formData[i].type);
+			$("<form/>").append($("<input/>", {type:formData[i].type, name: formData[i].name}));
+		}
+	};
+	
+	var form;
+	
+	$("#createForm").click(function() {
+		form = $("<form/>", {id : 'myForm'});
+		$("#formDiv").append(form);
+		$("#menu").show();
+	});
+	$("#text").click(function() {
+		var labelText = prompt("Enter Label");
+		var minLength = prompt("Enter Minimum Length");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<input/>", { type:'text', name: 'textField'}).addClass("invalid").on('input', function () {
+					if ($(this).val().length < minLength) {
+						$(this).removeClass("valid").addClass("invalid");
+					}
+					else {
+						$(this).removeClass("invalid").addClass("valid");
+					}
+				})
+			);
+		}
+	});
+	$("#password").click(function() {
+		var labelText = prompt("Enter Label");
+		var minLength = prompt("Enter Minimum Length");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<input/>", { type:'password', name: 'passwordField'}).addClass("invalid").on('input', function () {
+					if ($(this).val().length < minLength) {
+						$(this).removeClass("valid").addClass("invalid");
+					}
+					else {
+						$(this).removeClass("invalid").addClass("valid");
+					}
+				})
+			);
+		}
+	});
+	
+	$("#selectOptions").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);			
+			
+			var select = $("<select/>", {name: 'selectField'});
+			form.append(select);
+			form.append(
+			$("<button/>", {id: 'option', text: 'Add Option'})
+			);
+			$("#option").click(function(e) {
+				e.preventDefault();
+				var option = prompt("Enter Option");
+				select.append(
+				$("<option>"+option+"</option>")
+				);
+			});
+		}
+	});
+	$("#radio").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<input/>", { type:'radio', name: 'radioField'})
+			);
+		}
+	});
+	$("#check").click(function() {
+		var labelText = prompt("Enter Label");
+		var check = prompt("1 for optional, 2 for required");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			if (check == 2) {
+				form.append( 
+				$("<input/>", { type:'checkbox', name: 'checkField'}).addClass("uncheck")
+				);
+			}
+			else if (check == 1) {
+				form.append( 
+				$("<input/>", { type:'checkbox', name: 'checkField'})
+				);
+			}
+		}
+	});
+	
+	$("#file").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<input/>", { type:'file', name: 'fileField'}).addClass("invalid").click(function () {
+				alert($(this).val());
+					if ($(this).val()) {
+						$(this).removeClass("invalid").addClass("valid");
+					}
+					else {
+						$(this).removeClass("valid").addClass("invalid");						
+					}
+				})
+			);
+		}
+	});
+	
+	$("#datalistOptions").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);			
+			
+			var datalist = $("<datalist/>", { id : 'list', name: 'listField'});
+			form.append( 
+			$("<input/>", { type:'text', list : 'list'})
+			);
+			form.append(datalist);
+			form.append(
+			$("<button/>", {id: 'option2', text: 'Add Option'})
+			);
+			$("#option2").click(function(e) {
+				e.preventDefault();
+				var option = prompt("Enter Option");
+				datalist.append(
+				$("<option value='"+option+"'>")
+				);
+			});
+		}
+	});
+	
+	$("#number").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<input/>", {type:'number', name: 'numberField'})
+			);
+		}
+	});
+	$("#keygen").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<keygen/>", {name: 'keygenField'})
+			);
+		}
+	});
+	$("#textArea").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<textArea/>", { name: 'textAreaField'})
+			);
+		}
+	});
+	$("#output").click(function() {
+		var labelText = prompt("Enter Label");
+		if (labelText) {
+			form.append( 
+			$("<label>"+ labelText +"</label>")
+			);
+			form.append( 
+			$("<output/>", { name: 'outputField', form: 'myForm'})
+			);
+		}
+	});
+	
+	var array = new Array();
+	$("#json").click(function() {
+		$("input").each(function(index, element) {
+			array[index] = {
+				"type": $(this).attr('type'),
+				"name": $(this).attr('name'),
+				"value": $(this).attr('value')
+			}
+		});
+		updateLocalData(array);
+	});
+	
+	var updateLocalData = function(data) {
+		localStorage.setItem('form', JSON.stringify(data));
+		getLocalData();
+	};
+	
+
+});
+</script>
+</body>
+</html>
